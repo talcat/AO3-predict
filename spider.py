@@ -1,7 +1,16 @@
+""" 
+Talia Weiss     MLP Project     March 2013 
+spider.py
+
+This File contains functions/classes for scaping AO3.org for fanfiction (data 
+retreival) 
+"""
+
 import mechanize as mech
 import re
 import os, errno
 from multiprocessing import Pool, freeze_support
+
 
 def mkdir_p(path):
     try:
@@ -136,11 +145,15 @@ class AO3spider:
         
 def run():
     #month_start, month_end, rating
-    torun = [ (5, 3, 'G'), (5, 3, 'T'), (5, 3, 'M'), (5, 3, 'E') ]
+    torun = [ (6, 5, 'G'), (6, 5, 'T'), (6, 5, 'M'), (6, 5, 'E'),
+              (5, 4, 'G'), (5, 4, 'T'), (5, 4, 'M'), (5, 4, 'E'), 
+              (4, 3, 'G'), (4, 3, 'T'), (4, 3, 'M'), (4, 3, 'E'), 
+              (3, 2, 'G'), (3, 2, 'T'), (3, 2, 'M'), (3, 2, 'E') ]
             
-    pool = Pool(processes=4)
+    pool = Pool(processes=12)
     pool.map(AO3spider, torun)
-    
+    pool.close()
+    pool.join()
     
     
 
