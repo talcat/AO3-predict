@@ -1,0 +1,4 @@
+This project is still in progress wooo.
+
+ATM: spider.py will fetch things for you (look at docstring for more info)
+     data_extract.py will make fanfic objects for you
