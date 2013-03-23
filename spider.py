@@ -10,15 +10,8 @@ import mechanize as mech
 import re
 import os, errno
 from multiprocessing import Pool, freeze_support
+from common import mkdir_p
 
-
-def mkdir_p(path):
-    try:
-        os.makedirs(path)
-    except OSError as exc: # Python >2.5
-        if exc.errno == errno.EEXIST and os.path.isdir(path):
-            pass
-        else: raise
 
 def ao3_search(rating, month_start, month_end):
     """Generates the url for searching AO3 database.  Only controlling:
@@ -52,7 +45,7 @@ def ao3_search(rating, month_start, month_end):
     return search_res
 
 
-class AO3spider:
+class AO3spider(object):
     """This is a spider than trolls ao3 and downloads stuff. Will only download
     complete works >1000 words that do not have the illustrated tag.  Allows 
     definition of rating and months to search so I can multiprocess it if I need
@@ -150,10 +143,9 @@ def run():
               (4, 3, 'G'), (4, 3, 'T'), (4, 3, 'M'), (4, 3, 'E'), 
               (3, 2, 'G'), (3, 2, 'T'), (3, 2, 'M'), (3, 2, 'E') ]
             
-    pool = Pool(processes=12)
+    pool = Pool(processes=16)
     pool.map(AO3spider, torun)
-    pool.close()
-    pool.join()
+
     
     
 
