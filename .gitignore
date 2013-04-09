@@ -2,3 +2,8 @@
 *.html
 *.pik
 *.py~
+
+#But these dictionaries we want to keep track of
+!category.pik
+!lookup_table.pik
+!rating.pik

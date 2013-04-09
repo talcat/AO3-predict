@@ -10,7 +10,7 @@ import os, errno
 from common import mkdir_p
 from multiprocessing import Pool, freeze_support, Lock, Manager
 import re
-from fic_obj import Fanfic
+from fic_obj import Fanfic, Lookup
 
 
 def get_all_fic_paths(path_list):
@@ -47,38 +47,61 @@ def worker((lookup, rating, cat, path)):
     # I scraped wrong
     try:
         fic = Fanfic(path)
+    except: 
+        print 'Everything is Broken'
+        return None  #don't do anything else in this function
+        
+    try:    
         print fic.id
         #save fic as id.pik
         filename = '%s/%s.pik'%(new_dir, fic.id)
         with open(filename, 'w') as f:
             pik.dump(fic, f)
         
-        #add to dictionary
-        lookup[fic.id] = filename
-        
+       
         #rating
         rating[fic.rating[0]]+= [fic.id]
     
         #category:
         multi = False
+        thecat = []
         if len(fic.cat)>1:
             multi=True
         for c in fic.cat:
             if c == 'M/M':
                 cat['S']+= [fic.id]
+                thecat += ['S']
             if c == 'F/M' or c == 'M/F':
                 cat['H']+= [fic.id]
+                thecat += ['H']
             if c == 'F/F':
                 cat['FS']+= [fic.id]
+                thecat += ['FS']
             if c == 'Multi':
                 multi = True
+                thecat += ['M'] 
             if c == 'Other':
                 cat['O']+= [fic.id]
+                thecat += ['O']
             if c == 'Gen':
                 cat['G']+= [fic.id]
+                thecat += ['G']
         if multi:
             cat['M'] += [fic.id]
-    except: pass
+            if 'M' not in thecat:
+                thecat += ['M']
+                
+                
+        #Make lookup object:
+        look = Lookup(fic.id, filename, thecat, fic.rating)
+        
+        #add to dictionary
+        lookup[fic.id] = look        
+                
+    except: 
+        print 'Something went wrong'
+        pass
+    return None
     
 if __name__ == '__main__':
     manager = Manager() #for sharing a dictionary 
@@ -97,7 +120,7 @@ if __name__ == '__main__':
     cat['M'] = []
     cat['G'] = []
     
-    pool = Pool(processes = 25)
+    pool = Pool(processes = 4)
     lock = Lock()
     
     PATHS = ['/home/talcat/Desktop/Classes/MLP/ao3scrape/G_6to5/',

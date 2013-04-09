@@ -8,7 +8,7 @@ feature objects out of them
 import re
 from bs4 import BeautifulSoup, SoupStrainer
 from unidecode import unidecode #deals with unicode punctuation, etc
-from nltk import word_tokenize
+import nltk
 import cPickle as pik
 
 
@@ -99,35 +99,25 @@ class Fanfic(object):
         alltext = unidecode(alltext)
         self.doc = alltext
                 
-        self.wordlist = word_tokenize(alltext)
-        
-        
-def get_default_lookup():
-    """returns the default lookup dictionary in lookup_table.pik, probably made
-    by data_extract.py"""
+        self.wordlist = self.fixed_word_list()
     
-    PATH = '/home/talcat/Desktop/Classes/MLP/ao3scrape/lookup_table.pik'
-    
-    with open(PATH, 'r') as f:
-        table = pik.load(f)
-        
-    return table
+    def fixed_word_list(self):
+            
+        sentences = nltk.sent_tokenize(self.doc)
+        wordlist = map(nltk.word_tokenize, sentences)
+        wordlist = [w for sublist in wordlist for w in sublist]
+        return wordlist
 
 
-        
-def get_fic(id_num, lookup=get_default_lookup()):
-    """Given a fic id, will return the fic object loaded into memory"""
-    
-    try:
-        path = lookup[id_num] 
-    except KeyError:
-        print 'Not a valid fic id'
-        return None
-        
-    with open(path, 'r') as f:
-        fic = pik.load(f)
-        
-    return fic
+
+class Lookup(object):
+    """Defines a lookup object to load into a lookup table dictionary"""
+    def __init__(self, idx, path, cat, rating):
+        self.id = idx
+        self.path = path
+        self.cat = cat
+        self.rating = rating
         
 
+        
 

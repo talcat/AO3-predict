@@ -1,0 +1,12 @@
+Time and number information 
+
+for data_extract.py:
+real	24m18.218s
+user	73m58.117s
+sys	0m35.490s
+
+total number html files (total number scraped fics) = 32064
+total number fics categorized = 31189
+
+
+
