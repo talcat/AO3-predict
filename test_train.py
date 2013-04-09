@@ -53,6 +53,30 @@ def load_test_idx():
         
     return testdata 
            
+
+def fix_rateandcat_dics():
+    """Using the lookup table as law, will ensure that the rating dictionary and
+    the category dictionary contains all fics in the lookup table"""
+    
+    lookup = get_default_lookup()
+    rating = get_default_rating()
+    cat = get_default_cat()
+    
+    for idx in lookup.keys():
+        rate = lookup[idx].rating[0]
+        if idx not in rating[rate]:
+            rating[rate] += [idx]
+            
+        cats = lookup[idx].cat
+        for thecat in cats:
+            if idx not in cat[thecat]:
+                cat[thecat] += [idx]
+    with open('rating.pik', 'w') as f:
+        pik.dump(rating, f)
+        
+    with open('category.pik', 'w') as f:
+        pik.dump(cat, f)
+
     
     
 def pie_rating_dist(data, chart_name, chart_title):
