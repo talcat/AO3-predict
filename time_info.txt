@@ -9,4 +9,10 @@ total number html files (total number scraped fics) = 32064
 total number fics categorized = 31189
 
 
+for EvsG no pools
+real	26m34.581s
+user	26m27.935s
+sys	0m2.476s
+
+
 

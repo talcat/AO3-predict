@@ -13,7 +13,7 @@ from fic_obj import *
 from helper_funcs import *
 from random import shuffle
 import matplotlib.pyplot as plt
-
+from collections import OrderedDict
 
 def segment_test_train():
     """ Segments the data into test/train.  Saves them to a .pik file"""
@@ -105,4 +105,65 @@ def pie_rating_dist(data, chart_name, chart_title):
     plt.title(chart_title)
     plt.savefig('%s.png' %(chart_name))
     
+def corr_cat_with_rate(data):
+    """Given a list of fic ids (data), makes a piechart for each rating about the
+    distribution of relationship categories."""
+    
+    cat = get_default_cat()
+    rating = get_default_rating()
+    lookup = get_default_lookup()
+    
+    E_cat = OrderedDict([('G',0), ('S',0), ('FS',0), ('H',0), ('M',0), ('O',0)])
+    M_cat = OrderedDict([('G',0), ('S',0), ('FS',0), ('H',0), ('M',0), ('O',0)])
+    T_cat = OrderedDict([('G',0), ('S',0), ('FS',0), ('H',0), ('M',0), ('O',0)])
+    G_cat = OrderedDict([('G',0), ('S',0), ('FS',0), ('H',0), ('M',0), ('O',0)])
+    overall = OrderedDict([('G',0), ('S',0), ('FS',0), ('H',0), ('M',0), ('O',0)])
+      
+    for fic in data:
+        if fic in rating['E']:
+            for thecat in lookup[fic].cat:
+                E_cat[thecat] += 1
+        elif fic in rating['M']:
+            for thecat in lookup[fic].cat:
+                M_cat[thecat] += 1
+        elif fic in rating['T']:
+            for thecat in lookup[fic].cat:
+                T_cat[thecat] += 1
+        elif fic in rating['G']:
+            for thecat in lookup[fic].cat:
+                G_cat[thecat] += 1
+        for thecat in lookup[fic].cat:
+            overall[thecat] += 1
+    
+    plt.figure()
+    plt.pie( E_cat.values(), explode=None, 
+          labels=['Gen', 'Slash', 'Femslash', 'Het', 'Multi', 'Other'], autopct='%1.1f%%')
+    plt.title('Explicit Breakdown')
+    plt.savefig('explicitvscat.png')
+    
+    plt.figure()
+    plt.pie( T_cat.values(), explode=None, 
+          labels=['Gen', 'Slash', 'Femslash', 'Het', 'Multi', 'Other'], autopct='%1.1f%%')
+    plt.title('Teen Breakdown')
+    plt.savefig('teenvscat.png')
+    
+    plt.figure()
+    plt.pie( M_cat.values(), explode=None, 
+         labels=['Gen', 'Slash', 'Femslash', 'Het', 'Multi', 'Other'], autopct='%1.1f%%')
+    plt.title('Mature Breakdown')
+    plt.savefig('maturevscat.png')
+    
+    plt.figure()
+    plt.pie( G_cat.values(), explode=None, 
+          labels=['Gen', 'Slash', 'Femslash', 'Het', 'Multi', 'Other'], autopct='%1.1f%%')
+    plt.title('Gen Breakdown')
+    plt.savefig('genvscat.png')
+    
+    print overall
+    print overall.values()
+    plt.figure()
+    plt.pie( overall.values(), explode=None, 
+          labels=['Gen', 'Slash', 'Femslash', 'Het', 'Multi', 'Other'], autopct='%1.1f%%')
+    plt.title('Training Set Category Breakdown')
+    plt.savefig('catoverall.png')
 

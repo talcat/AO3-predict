@@ -148,7 +148,8 @@ if __name__ == '__main__':
     items = [(lookup, rating, cat, fic) for fic in fic_list]
                 
     pool.map(worker, items)
-         
+    pool.close()
+    pool.join()     
 
     print 'All Done'
     print len(fic_list)
